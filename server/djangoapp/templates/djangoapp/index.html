@@ -32,18 +32,33 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#">About us</a>
+                        <a class="nav-link" href="{% url 'djangoapp:about' %}">About us</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="#">Contact us</a>
+                        <a class="nav-link" href="{% url 'djangoapp:contact' %}">Contact us</a>
                       </li>
                     </ul>
                 </div>
 
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                </form>
+                {% if user.is_authenticated %}
+
+                    <li>
+                        <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                    </li>
+
+                {% else %}
+
+                    <form class="d-flex" action="{% url 'djangoapp:login' %}" method="POST">
+                        {% csrf_token %}
+                        <input class="form-control me-2" type="text" placeholder="Username" name="username">
+                        <input class="form-control me-2" type="password" placeholder="Password" name="psw"> 
+                        <button class="btn btn-outline-success" type="submit">Login</button>
+                    </form>
+
+                    <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">SignUp</a>
+
+                {% endif %}
 
             </div>
 
