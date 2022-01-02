@@ -28,13 +28,27 @@ def analyze_review_sentiment(dealerreview):
     params["text"] = dealerreview
     params["version"] = "2021-08-01"
     params["features"] = "sentiment"
+    params["return_analyzed_text"] = True
+    params["language"] = "en"
 
-    response = requests.get("https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/1dcb84cb-41ed-482c-8247-d92ab1ad2b91",params = params,headers={'Content-Type': 'application/json'},auth=HTTPBasicAuth('apikey', "Itp6ntlUsznRKL7jPhZSGwNqrbw4Wa5rStluUMf_A7tC") )
+    response = requests.get("https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/1dcb84cb-41ed-482c-8247-d92ab1ad2b91/v1/analyze",params = params,headers={'Content-Type': 'application/json'},auth=HTTPBasicAuth('apikey', "Itp6ntlUsznRKL7jPhZSGwNqrbw4Wa5rStluUMf_A7tC") )
 
-    return response.text
+    res = json.loads(response.text)
 
+    return res["sentiment"] ["document"] ["label"]
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
+
+def post_request(url,json_payload,**kwargs):
+    try:   
+        response = requests.post(url,params=json_payload)
+    except:
+        print("Network exception occurred")
+
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+    json_data = json.loads(response.text)
+    return json_data
 
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
