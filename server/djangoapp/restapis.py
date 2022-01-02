@@ -23,6 +23,15 @@ def get_request(url, **kwargs):
     json_data = json.loads(response.text)
     return json_data
 
+def analyze_review_sentiment(dealerreview):
+    params = dict()
+    params["text"] = dealerreview
+    params["version"] = "2021-08-01"
+    params["features"] = "sentiment"
+
+    response = requests.get("https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/1dcb84cb-41ed-482c-8247-d92ab1ad2b91",params = params,headers={'Content-Type': 'application/json'},auth=HTTPBasicAuth('apikey', "Itp6ntlUsznRKL7jPhZSGwNqrbw4Wa5rStluUMf_A7tC") )
+
+    return response.text
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
@@ -47,6 +56,7 @@ def get_dealers_from_cf(url, **kwargs):
                                    idcar=dealer["id"], lat=dealer["lat"], lon=dealer["long"],
                                    short_name=dealer["short_name"],
                                    st=dealer["st"], zi=dealer["zip"])
+
             results.append(dealer_obj)
 
     return results
@@ -93,6 +103,9 @@ def get_dealer_review_from_cf(url, **kwargs):
                                    review=dealer["review"], purchase_date=dealer["purchase_date"], car_make=dealer["car_make"],
                                    car_model=dealer["car_model"],
                                    car_year=dealer["car_year"], idr=dealer["id"])
+
+            dealer_obj.sentiment = analyze_review_sentiment(dealer_obj.review)
+
             results.append(dealer_obj)
 
     return results
