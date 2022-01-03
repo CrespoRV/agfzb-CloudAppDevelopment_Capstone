@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
-from .models import CarDealer
+from .models import CarDealer,CarModel
 # from .restapis import related methods
 from .restapis import get_dealers_from_cf,get_dealers_by_state,get_dealer_review_from_cf,analyze_review_sentiment,post_request
 from django.contrib.auth import login, logout, authenticate
@@ -123,26 +123,41 @@ def get_dealer_details(request, dealerId):
 
 def add_review(request,dealer_id):
 
+    context = {}
+
     if (request.method == "GET"):
 
         if (request.user.is_authenticated):
 
-            json_payload = dict()
-            json_payload["id"] = 444
-            json_payload["name"] = "Rodrigo"
-            json_payload["dealership"] = dealer_id
-            json_payload["review"] = "The best car ever"
-            json_payload["purchase"] = True
-            json_payload["purchase_date"] = datetime.utcnow().isoformat()
-            json_payload["car_make"] = "Renault"
-            json_payload["car_model"] = "Sedan"
-            json_payload["car_year"] = 2020
+            res = CarModel.objects.filter(dealer_id=dealer_id)
 
-            res = post_request("https://ab9704cf.us-south.apigw.appdomain.cloud/api/review", json_payload, dealerId=dealer_id)
+            context["cars"] = res
 
-            return HttpResponse(res)
+            return render(request, 'djangoapp/add_review.html', context)
 
 
 
 
 
+
+
+
+            
+
+
+
+
+#json_payload = dict()
+#           json_payload["id"] = 444
+#          json_payload["name"] = "Rodrigo"
+#          json_payload["dealership"] = dealer_id
+#            json_payload["review"] = "The best car ever"
+#            json_payload["purchase"] = True
+#            json_payload["purchase_date"] = datetime.utcnow().isoformat()
+#            json_payload["car_make"] = "Renault"
+#            json_payload["car_model"] = "Sedan"
+#            json_payload["car_year"] = 2020
+#
+#            res = post_request("https://ab9704cf.us-south.apigw.appdomain.cloud/api/review", json_payload, dealerId=dealer_id)
+#
+#            return HttpResponse(res)
