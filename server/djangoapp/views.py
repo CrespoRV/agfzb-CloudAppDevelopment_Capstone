@@ -41,14 +41,16 @@ logger = logging.getLogger(__name__)
 
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
+    context = {}
     if request.method == "GET":
         url = "https://ab9704cf.us-south.apigw.appdomain.cloud/api/dealership"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
+        context["dealerships_list"] = dealerships
         # Concat all dealer's short name
         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # Return a list of dealer short name
-        return HttpResponse(dealer_names)
+        return render(request,'djangoapp/index.html',context)
 
 def about_us(request):
     context = {}
@@ -108,15 +110,12 @@ def registration_request(request):
 # ...
 
 def get_dealer_details(request, dealerId):
-
+    context = {}
     if request.method == "GET":
         url = "https://ab9704cf.us-south.apigw.appdomain.cloud/api/review"
-        # Get dealers from the URL
-        dealerships = get_dealer_review_from_cf(url,dealerId = dealerId)
-        # Concat all dealer's short name
-        dealer_reviews = ' '.join(["{} -- {} //".format(dealer.review,dealer.sentiment)  for dealer in dealerships])
-        # Return a list of dealer short name
-        return HttpResponse(dealer_reviews)
+        dealerships_details = get_dealer_review_from_cf(url,dealerId = dealerId)
+        context["dealerships_details"] = dealerships_details
+        return render(request,'djangoapp/dealer_details.html',context)
 
 # Create a `add_review` view to submit a review
 # def add_review(request, dealer_id):
