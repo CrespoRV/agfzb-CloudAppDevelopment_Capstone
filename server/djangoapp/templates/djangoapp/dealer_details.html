@@ -50,30 +50,44 @@
 
         <div class="container" style="padding-top:2rem;">
 
-            <div class="card-columns">
-                
-                {% for review in dealerships_details %}
+            {% if dealerships_details %}
 
-                    <div class="card" style="border-radius:0.5rem;">
+                <div class="card-columns">
+                    
+                    {% for review in dealerships_details %}
 
-                        <img class="card-img-left" src="{{MEDIA_URL}}/emoji/{{review.sentiment}}.png" height="50px" width="50px"/>
+                        <div class="card" style="border-radius:0.5rem;">
 
-                        <div class="card-body" style="width: 18rem;">
-                            <h5 class="card-title">{{ review.car_model}} , {{review.car_make}}</h5>
-                            <h4 class="card-title"> {{ review.car_year}} </h4>
-                            <p class="card-text">{{ review.review }}</p>
+                            <img class="card-img-left" src="{{MEDIA_URL}}/emoji/{{review.sentiment}}.png" height="50px" width="50px"/>
+
+                            <div class="card-body" style="height:150px;">
+                                {% if "True" in review.purchase %}
+                                    <h5 class="card-title">{{ review.car_model}} , {{review.car_make}}</h5>
+                                    <h4 class="card-title"> {{ review.car_year}} </h4>
+                                {% endif %}
+                                <p class="card-text">{{ review.review }}</p>
+                            </div>
+
                         </div>
+                    {% endfor %}
 
-                    </div>
-                {% endfor %}
+                </div>
 
-            </div>
+            {% else %}
+
+                <h1>  No reviews have been written for this dealership yet </h1>
+
+            {% endif %}
 
         </div>
 
         {% if user.is_authenticated %}
 
-            <a >{{dealer.full_name}}</a>
+            <div class="container" style="text-align:center;">
+
+                <a style="font-size:40px;" href="{% url 'djangoapp:add_review' dealerId %}"> Add a review </a>
+
+            </div>
 
         {% endif %}
 
