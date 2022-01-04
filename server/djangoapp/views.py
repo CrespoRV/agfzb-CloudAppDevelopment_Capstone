@@ -135,8 +135,11 @@ def add_review(request,dealer_id):
 
     elif (request.method == "POST"):
 
-        idcar = int(request.POST["car"])
+        idcar = 1
 
+        if 'idcar' in request.POST:
+            idcar = int(request.POST["car"])
+            
         car = CarModel.objects.filter(id=idcar)
 
         check = False
@@ -153,7 +156,7 @@ def add_review(request,dealer_id):
         json_payload["review"] = request.POST["content"]
         json_payload["purchase"] = check
 
-        if check:
+        if check and ('idcar' in request.POST):
             json_payload["purchase_date"] = request.POST["purchasedate"]
             json_payload["car_make"] = car[0].car_make.name
             json_payload["car_model"] = car[0].name
